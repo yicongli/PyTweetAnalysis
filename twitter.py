@@ -1,4 +1,12 @@
 import json
+import sys
+
+def input():
+  if len(sys.argv) != 2:
+    print ("twitter.py <twitter_file.json>" )
+  else:
+    fileName = sys.argv[1]
+    return fileName
 
 def getGeoLocation():
   """
@@ -19,7 +27,11 @@ def getGeoLocation():
   
   return grids
 
+
 if __name__ == "__main__":
-  grids = getGeoLocation()   
-  for grid in grids:
-    print (grids[grid])
+  twitterFile = input()
+  
+  # grids = getGeoLocation()   
+  # for grid in grids:
+  #   print (grids[grid])
+
