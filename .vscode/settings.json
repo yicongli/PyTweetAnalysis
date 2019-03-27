@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/home/ltt/anaconda2/envs/sml/bin/python"
+    "python.pythonPath": "/home/ltt/anaconda2/envs/sml/bin/python",
+    "python.linting.pylintEnabled": true
 }
