@@ -29,12 +29,12 @@ def getFileLinePoint(fileName):
     json.dump(dict_pos, outfile)
   return dict_pos
 
-def parseJsonDataWithConf(fileName, startLineNum, size):
+def parseJsonDataWithConf(fileName, startLinePoint, size):
   """
   parse json data according to current arranged period
   """
   with open(fileName, 'r') as file:
-    file.seek(startLineNum) # jump to the start point
+    file.seek(startLinePoint) # jump to the start point
     for i, line in enumerate(file):
       # if larger than current size, then return directly
       if(i >= size): 
@@ -80,7 +80,6 @@ from mpi4py import MPI
 CONST_SIZE = 2500000  # the total line number of data is 2500000
 
 if __name__ == "__main__":
-  twitterFile = inputFileName()
   grids = getGeoLocation()   
 
   #num_lines = sum(1 for line in open('/Users/yicongli/Downloads/twitter-melb.json'))
@@ -91,8 +90,10 @@ if __name__ == "__main__":
   with open('conf.json') as json_data:
     listConf = json.load(json_data)
   
-  #comm = MPI.COMM_WORLD
-  #iterRange = CONST_SIZE / comm.size
-  # Test code
-  parseJsonDataWithConf('/Users/yicongli/Downloads/twitter-melb.json',listConf[0],CONST_SIZE / 4)
+  comm = MPI.COMM_WORLD
+  iterRange = int(CONST_SIZE / comm.size)
+  startLineNum = comm.rank * iterRange + 1
+
+  twitterFile = inputFileName()
+  parseJsonDataWithConf(twitterFile,listConf[startLineNum], iterRange)
 
