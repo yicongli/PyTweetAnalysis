@@ -1,7 +1,5 @@
 import sys
 import json
-from collections import OrderedDict
-from operator import itemgetter   
 from mpi4py import MPI
 
 def getGeoLocation():
@@ -134,12 +132,12 @@ def pretty(d, indent=0):
   """
   print pretty, only for testing
   """
-   for key, value in d.items():
-      print('\t' * indent + str(key))
-      if isinstance(value, dict):
-         pretty(value, indent+1)
-      else:
-         print('\t' * (indent+1) + str(value))
+  for key, value in d.items():
+    print('\t' * indent + str(key))
+    if isinstance(value, dict):
+        pretty(value, indent+1)
+    else:
+        print('\t' * (indent+1) + str(value))
 
 CONST_SIZE = 2500000  # the total line number of data is 2500000
 
