@@ -1,7 +1,7 @@
 # cluster-and-cloud-1
 Assignment 1
 
-the process of handling the big json file:
+the procedure of handling the big json file:
 1. Preprocessing the big file to get the start position of each line
 2. Save all start position in to a list and store in the json file named 'conf.json'
 3. Before starting processing the big file, read the config from configuration
