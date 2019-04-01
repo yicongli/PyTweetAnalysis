@@ -142,9 +142,6 @@ def pretty(d, indent=0):
 CONST_SIZE = 2500000  # the total line number of data is 2500000
 
 if __name__ == "__main__":
-
-  #num_lines = sum(1 for line in open('/Users/yicongli/Downloads/twitter-melb.json'))
-  #print(num_lines)
   # for grid in grids:
   #   print (grids[grid])
 
