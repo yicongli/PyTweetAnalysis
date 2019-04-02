@@ -127,7 +127,7 @@ def removeRedundantHashtags(resultDic):
   for key, value in resultDic.items():
     hashtagDic = value['hashtags']
     orderedList = [(k, hashtagDic[k]) for k in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
-    value['hashtags'] = dict(orderedList[:20])
+    value['hashtags'] = dict(orderedList)#[:20])
 
 def handlingAllData(dataList):
   """
