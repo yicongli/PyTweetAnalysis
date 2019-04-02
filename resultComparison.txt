@@ -8,9 +8,9 @@
          ('melbourne',
          5009         ),
          ('Job',
-         1543         ),
+         1560         ),
          ('Jobs',
-         1270         ),
+         1293         ),
          ('australia',
          1071         )
       ]
@@ -22,11 +22,11 @@
          ('melbourne',
          565         ),
          ('Melbourne',
-         452         ),
+         455         ),
          ('auspol',
-         323         ),
+         351         ),
          ('Incident',
-         312         ),
+         314         ),
          ('victraffic',
          239         )
       ]
@@ -36,15 +36,15 @@
       'posN':53306,
       'hashtags':[  
          ('melbourne',
-         347         ),
+         348         ),
          ('Incident',
-         314         ),
+         317         ),
          ('victraffic',
-         296         ),
+         297         ),
          ('Melbourne',
-         267         ),
+         270         ),
          ('FireAlarm',
-         217         )
+         232         )
       ]
    }   ),
    ('B3',
@@ -52,13 +52,13 @@
       'posN':26560,
       'hashtags':[  
          ('Incident',
-         220         ),
+         222         ),
          ('StructureFire',
          177         ),
          ('NonStructureFire',
          159         ),
          ('FireAlarm',
-         150         ),
+         158         ),
          ('victraffic',
          139         )
       ]
@@ -68,15 +68,15 @@
       'posN':19702,
       'hashtags':[  
          ('auspol',
-         265         ),
+         271         ),
          ('Incident',
-         193         ),
+         195         ),
          ('StructureFire',
          179         ),
          ('SaveDallas',
-         168         ),
+         169         ),
          ('victraffic',
-         141         )
+         144         )
       ]
    }   ),
    ('B1',
@@ -84,13 +84,13 @@
       'posN':16507,
       'hashtags':[  
          ('Melbourne',
-         133         ),
+         136         ),
          ('StructureFire',
-         132         ),
+         134         ),
          ('vote5sos',
          130         ),
          ('NonStructureFire',
-         127         ),
+         128         ),
          ('Incident',
          111         )
       ]
@@ -105,10 +105,10 @@
          83         ),
          ('victraffic',
          79         ),
+         ('StructureFire',
+         70         ),
          ('NoblePark',
-         67         ),
-         ('Other',
-         55         )
+         67         )
       ]
    }   ),
    ('D3',
@@ -116,15 +116,15 @@
       'posN':13367,
       'hashtags':[  
          ('Incident',
-         66         ),
+         67         ),
          ('beach',
-         63         ),
+         65         ),
          ('victraffic',
          63         ),
-         ('melbourne',
-         55         ),
          ('StructureFire',
-         49         )
+         62         ),
+         ('melbourne',
+         57         )
       ]
    }   ),
    ('C1',
@@ -138,7 +138,7 @@
          ('JACKDM',
          106         ),
          ('StructureFire',
-         76         ),
+         98         ),
          ('CamTo4Mill',
          73         )
       ]
@@ -147,12 +147,12 @@
    {  
       'posN':5449,
       'hashtags':[  
+         ('NonStructureFire',
+         55         ),
          ('Incident',
          49         ),
-         ('NonStructureFire',
-         47         ),
          ('StructureFire',
-         44         ),
+         49         ),
          ('Melbourne',
          42         ),
          ('SmallzyWelcomesHome5SOS',
@@ -166,11 +166,11 @@
          ('RAW',
          40         ),
          ('StructureFire',
-         33         ),
+         38         ),
          ('SaveConstantine',
          30         ),
          ('NonStructureFire',
-         27         ),
+         30         ),
          ('Epping',
          19         )
       ]
@@ -196,7 +196,7 @@
       'posN':4106,
       'hashtags':[  
          ('melbourne',
-         36         ),
+         38         ),
          ('victraffic',
          31         ),
          ('Melbourne',
