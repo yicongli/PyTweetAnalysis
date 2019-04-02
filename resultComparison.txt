@@ -1,0 +1,258 @@
+[  
+   ('C2',
+   {  
+      'posN':145164,
+      'hashtags':[  
+         ('Melbourne',
+         8390         ),
+         ('melbourne',
+         5009         ),
+         ('Job',
+         1543         ),
+         ('Jobs',
+         1270         ),
+         ('australia',
+         1071         )
+      ]
+   }   ),
+   ('B2',
+   {  
+      'posN':79559,
+      'hashtags':[  
+         ('melbourne',
+         565         ),
+         ('Melbourne',
+         452         ),
+         ('auspol',
+         323         ),
+         ('Incident',
+         312         ),
+         ('victraffic',
+         239         )
+      ]
+   }   ),
+   ('C3',
+   {  
+      'posN':53306,
+      'hashtags':[  
+         ('melbourne',
+         347         ),
+         ('Incident',
+         314         ),
+         ('victraffic',
+         296         ),
+         ('Melbourne',
+         267         ),
+         ('FireAlarm',
+         217         )
+      ]
+   }   ),
+   ('B3',
+   {  
+      'posN':26560,
+      'hashtags':[  
+         ('Incident',
+         220         ),
+         ('StructureFire',
+         177         ),
+         ('NonStructureFire',
+         159         ),
+         ('FireAlarm',
+         150         ),
+         ('victraffic',
+         139         )
+      ]
+   }   ),
+   ('C4',
+   {  
+      'posN':19702,
+      'hashtags':[  
+         ('auspol',
+         265         ),
+         ('Incident',
+         193         ),
+         ('StructureFire',
+         179         ),
+         ('SaveDallas',
+         168         ),
+         ('victraffic',
+         141         )
+      ]
+   }   ),
+   ('B1',
+   {  
+      'posN':16507,
+      'hashtags':[  
+         ('Melbourne',
+         133         ),
+         ('StructureFire',
+         132         ),
+         ('vote5sos',
+         130         ),
+         ('NonStructureFire',
+         127         ),
+         ('Incident',
+         111         )
+      ]
+   }   ),
+   ('D4',
+   {  
+      'posN':14481,
+      'hashtags':[  
+         ('nowplaying',
+         1730         ),
+         ('KarishmaTannaCraze',
+         83         ),
+         ('victraffic',
+         79         ),
+         ('NoblePark',
+         67         ),
+         ('Other',
+         55         )
+      ]
+   }   ),
+   ('D3',
+   {  
+      'posN':13367,
+      'hashtags':[  
+         ('Incident',
+         66         ),
+         ('beach',
+         63         ),
+         ('victraffic',
+         63         ),
+         ('melbourne',
+         55         ),
+         ('StructureFire',
+         49         )
+      ]
+   }   ),
+   ('C1',
+   {  
+      'posN':8415,
+      'hashtags':[  
+         ('jackfollowme',
+         148         ),
+         ('Incident',
+         112         ),
+         ('JACKDM',
+         106         ),
+         ('StructureFire',
+         76         ),
+         ('CamTo4Mill',
+         73         )
+      ]
+   }   ),
+   ('B4',
+   {  
+      'posN':5449,
+      'hashtags':[  
+         ('Incident',
+         49         ),
+         ('NonStructureFire',
+         47         ),
+         ('StructureFire',
+         44         ),
+         ('Melbourne',
+         42         ),
+         ('SmallzyWelcomesHome5SOS',
+         27         )
+      ]
+   }   ),
+   ('A3',
+   {  
+      'posN':5019,
+      'hashtags':[  
+         ('RAW',
+         40         ),
+         ('StructureFire',
+         33         ),
+         ('SaveConstantine',
+         30         ),
+         ('NonStructureFire',
+         27         ),
+         ('Epping',
+         19         )
+      ]
+   }   ),
+   ('A2',
+   {  
+      'posN':4165,
+      'hashtags':[  
+         ('krazykristmas',
+         177         ),
+         ('NonStructureFire',
+         72         ),
+         ('StructureFire',
+         70         ),
+         ('rcl1milliongiveaway',
+         59         ),
+         ('EGsHolidayGiveaway',
+         57         )
+      ]
+   }   ),
+   ('C5',
+   {  
+      'posN':4106,
+      'hashtags':[  
+         ('melbourne',
+         36         ),
+         ('victraffic',
+         31         ),
+         ('Melbourne',
+         22         ),
+         ('photo',
+         20         ),
+         ('1000steps',
+         16         )
+      ]
+   }   ),
+   ('D5',
+   {  
+      'posN':3248,
+      'hashtags':[  
+         ('Lost',
+         28         ),
+         ('Cat',
+         28         ),
+         ('SomebodyToCon',
+         27         ),
+         ('FindJasper',
+         23         ),
+         ('victraffic',
+         20         )
+      ]
+   }   ),
+   ('A1',
+   {  
+      'posN':2533,
+      'hashtags':[  
+         ('tattoo',
+         14         ),
+         ('worldjudo2014',
+         11         ),
+         ('VOBIS',
+         11         ),
+         ('BBAU',
+         11         ),
+         ('judo',
+         10         )
+      ]
+   }   ),
+   ('A4',
+   {  
+      'posN':308,
+      'hashtags':[  
+         ('auspol',
+         7         ),
+         ('LNP',
+         6         ),
+         ('qldvotes',
+         6         ),
+         ('libspill',
+         5         ),
+         ('photo',
+         3         )
+      ]
+   }   )
+]

@@ -1,6 +1,7 @@
 import sys
 import json
 from mpi4py import MPI
+from operator import itemgetter
 
 def getGeoLocation():
   """
@@ -126,25 +127,57 @@ def removeRedundantHashtags(resultDic):
   for key, value in resultDic.items():
     hashtagDic = value['hashtags']
     orderedList = [(k, hashtagDic[k]) for k in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
-    value['hashtags'] = dict(orderedList[0:])
+    value['hashtags'] = dict(orderedList[:20])
 
+def handlingAllData(dataList):
+  """
+  combine all data in the list together and return data list
+  """
+  result = initResultDic()
+  for data in dataList:
+    for key, value in data.items():
+      totalNum = result[key]['posN']
+      result[key]['posN'] = value['posN'] + totalNum
+
+      hashtags = value['hashtags']
+      for hashtag, value in hashtags.items():
+          hashtagNum = 0
+          try:
+            hashtagNum = result[key]['hashtags'][hashtag]
+          except KeyError:
+            result[key]['hashtags'][hashtag] = hashtagNum
+          finally:
+            result[key]['hashtags'][hashtag] = hashtagNum + value
+
+  return result
+
+def orderTheResultIntoList(resultDic):
+  """
+  Sort the Area by post number, sort the hash tags of each area by number 
+  """
+  for key, value in resultDic.items():
+    hashtagDic = value['hashtags']
+    hashList = [(k, hashtagDic[k]) for k in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
+    value['hashtags'] = hashList[:5]
+
+  resultList = [(k, resultDic[k]) for k in sorted(resultDic, key=lambda x: resultDic[x]['posN'], reverse=True)]
+  return resultList
+
+"""
 def pretty(d, indent=0):
-  """
-  print pretty, only for testing
-  """
+  #print pretty, only for testing
   for key, value in d.items():
     print('\t' * indent + str(key))
     if isinstance(value, dict):
         pretty(value, indent+1)
     else:
         print('\t' * (indent+1) + str(value))
+"""
 
 CONST_SIZE = 2500000  # the total line number of data is 2500000
 
 if __name__ == "__main__":
-  # for grid in grids:
-  #   print (grids[grid])
-
+  #load configuration of big json data
   with open('conf.json') as json_data:
     listConf = json.load(json_data)
   
@@ -154,7 +187,16 @@ if __name__ == "__main__":
 
   twitterFile = inputFileName()
   result = parseJsonDataWithConf(twitterFile,listConf[startLineNum], iterRange)
+  removeRedundantHashtags(result) # may need to remove the hashtag that have really small number
 
-  #removeRedundantHashtags(result) # may need to remove the hashtag that have really small number
-  #pretty(result) # print pretty, only for testing
+  # gather data all together
+  data = comm.gather(result)
+  if comm.rank == 0:
+    if comm.size != 1:
+      # combine all result together into one dict
+      result = handlingAllData(data)
+    #sort data in the list
+    orderedList = orderTheResultIntoList(result)
+    #print data
+    print(orderedList)
 
