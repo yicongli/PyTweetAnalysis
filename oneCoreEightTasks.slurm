@@ -7,4 +7,4 @@
 
 module load Python/3.6.1-intel-2017.u2
 
-mpiexec -n 8 python3 twitter.py
+mpiexec -n 8 python3 twitter.py 

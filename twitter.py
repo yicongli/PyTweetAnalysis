@@ -163,16 +163,14 @@ def orderTheResultIntoList(resultDic):
   resultList = [(k, resultDic[k]) for k in sorted(resultDic, key=lambda x: resultDic[x]['posN'], reverse=True)]
   return resultList
 
-"""
-def pretty(d, indent=0):
-  #print pretty, only for testing
-  for key, value in d.items():
-    print('\t' * indent + str(key))
-    if isinstance(value, dict):
-        pretty(value, indent+1)
-    else:
-        print('\t' * (indent+1) + str(value))
-"""
+
+def prettyPrint(resultList):
+  #print pretty
+  for value in resultList:
+    print('%s: %d posts, (' % (value[0], value[1]['posN']), end='')
+    for hashtag in value[1]['hashtags']:
+      print('%s ' % (hashtag, ), end='')
+    print(')')
 
 CONST_SIZE = 2500000  # the total line number of data is 2500000
 
@@ -198,5 +196,4 @@ if __name__ == "__main__":
     #sort data in the list
     orderedList = orderTheResultIntoList(result)
     #print data
-    print(orderedList)
-
+    prettyPrint(orderedList)
