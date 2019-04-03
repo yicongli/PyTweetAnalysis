@@ -1,0 +1,20 @@
+C2: 145164 posts, (('Melbourne', 8390) ('melbourne', 5009) ('Job', 1560) ('Jobs', 1293) ('australia', 1071) )
+B2: 79559 posts, (('melbourne', 565) ('Melbourne', 455) ('auspol', 351) ('Incident', 314) ('victraffic', 239) )
+C3: 53306 posts, (('melbourne', 348) ('Incident', 317) ('victraffic', 297) ('Melbourne', 270) ('FireAlarm', 232) )
+B3: 26560 posts, (('Incident', 222) ('StructureFire', 177) ('NonStructureFire', 159) ('FireAlarm', 158) ('victraffic', 139) )
+C4: 19702 posts, (('auspol', 271) ('Incident', 195) ('StructureFire', 179) ('SaveDallas', 169) ('victraffic', 144) )
+B1: 16507 posts, (('Melbourne', 136) ('StructureFire', 134) ('vote5sos', 130) ('NonStructureFire', 128) ('Incident', 111) )
+D4: 14481 posts, (('nowplaying', 1730) ('KarishmaTannaCraze', 83) ('victraffic', 79) ('StructureFire', 70) ('NoblePark', 67) )
+D3: 13367 posts, (('Incident', 67) ('beach', 65) ('victraffic', 63) ('StructureFire', 62) ('melbourne', 57) )
+C1: 8415 posts, (('jackfollowme', 148) ('Incident', 112) ('JACKDM', 106) ('StructureFire', 98) ('CamTo4Mill', 73) )
+B4: 5449 posts, (('NonStructureFire', 55) ('Incident', 49) ('StructureFire', 49) ('Melbourne', 42) ('SmallzyWelcomesHome5SOS', 27) )
+A3: 5019 posts, (('RAW', 40) ('StructureFire', 38) ('SaveConstantine', 30) ('NonStructureFire', 30) ('Epping', 19) )
+A2: 4165 posts, (('krazykristmas', 177) ('NonStructureFire', 72) ('StructureFire', 70) ('rcl1milliongiveaway', 59) ('EGsHolidayGiveaway', 57) )
+C5: 4106 posts, (('melbourne', 38) ('victraffic', 31) ('Melbourne', 22) ('photo', 20) ('1000steps', 16) )
+D5: 3248 posts, (('Lost', 28) ('Cat', 28) ('SomebodyToCon', 27) ('FindJasper', 23) ('victraffic', 20) )
+A1: 2533 posts, (('tattoo', 14) ('worldjudo2014', 11) ('VOBIS', 11) ('BBAU', 11) ('judo', 10) )
+A4: 308 posts, (('auspol', 7) ('LNP', 6) ('qldvotes', 6) ('libspill', 5) ('photo', 3) )
+
+real	3m55.123s
+user	3m50.711s
+sys	0m3.710s
