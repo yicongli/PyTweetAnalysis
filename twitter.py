@@ -2,6 +2,7 @@ import sys
 import json
 from mpi4py import MPI
 from operator import itemgetter
+from CaseInsensitiveDict import CaseInsensitiveDict
 
 def getGeoLocation():
   """
@@ -48,7 +49,7 @@ def initResultDic():
   """
   resultDic = {}
   for key, value in g_grids.items():
-    resultDic[key] = {'posN':0, 'hashtags':{}}
+    resultDic[key] = {'posN':0, 'hashtags':CaseInsensitiveDict()}
   
   return resultDic
 
@@ -180,7 +181,7 @@ if __name__ == "__main__":
     listConf = json.load(json_data)
   
   comm = MPI.COMM_WORLD
-  iterRange = int(CONST_SIZE / comm.size) # get the range of iteration
+  iterRange = int(CONST_SIZE / 8) # get the range of iteration
   startLineNum = comm.rank * iterRange + 1
 
   twitterFile = inputFileName()
