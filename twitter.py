@@ -2,7 +2,16 @@ import sys
 import json
 from mpi4py import MPI
 from operator import itemgetter
-from CaseInsensitiveDict import CaseInsensitiveDict
+
+class CaseInsensitiveDict(dict):
+  """
+  the dict which is case-insensitive
+  """
+  def __setitem__(self, key, value):
+      super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
+
+  def __getitem__(self, key):
+      return super(CaseInsensitiveDict, self).__getitem__(key.lower())
 
 def getGeoLocation():
   """
@@ -181,7 +190,7 @@ if __name__ == "__main__":
     listConf = json.load(json_data)
   
   comm = MPI.COMM_WORLD
-  iterRange = int(CONST_SIZE / 8) # get the range of iteration
+  iterRange = int(CONST_SIZE / comm.size) # get the range of iteration
   startLineNum = comm.rank * iterRange + 1
 
   twitterFile = inputFileName()
