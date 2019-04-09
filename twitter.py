@@ -103,7 +103,7 @@ def extractInfoFromData(data, resultDic):
   for key, value in g_grids.items():
     # if the value in the specific area, then store the data into the result dic
     if (dataCoord[0] <= value['xmax'] and dataCoord[0] > value['xmin'] 
-    and dataCoord[1] <= value['ymax'] and dataCoord[1] > value['ymin']):
+    and dataCoord[1] < value['ymax'] and dataCoord[1] >= value['ymin']):
       postNum = resultDic[key]['posN']
       resultDic[key]['posN'] = postNum + 1
       hashtags = data['doc']['entities']['hashtags']
