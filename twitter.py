@@ -176,10 +176,16 @@ def orderTheResultIntoList(resultDic):
 
 def prettyPrint(resultList):
   #print pretty
+  print('The rank of Grid boxes:')
   for value in resultList:
-    print('%s: %d posts, (' % (value[0], value[1]['posN']), end='')
+    print('%s: %d posts,' % (value[0], value[1]['posN']))
+  
+  print('-'*30)
+  print('The rank of the top 5 hashtags in each Grid boxes:')
+  for value in resultList:
+    print('%s: (' % (value[0]), end='')
     for hashtag in value[1]['hashtags']:
-      print('%s ' % (hashtag, ), end='')
+      print('(#%s, %d), ' % (hashtag[0], hashtag[1]), end='')
     print(')')
 
 CONST_SIZE = 2500000  # the total line number of data is 2500000
