@@ -1,20 +1,39 @@
-C2: 145164 posts, (('Melbourne', 8390) ('melbourne', 5009) ('Job', 1560) ('Jobs', 1293) ('australia', 1071) )
-B2: 79559 posts, (('melbourne', 565) ('Melbourne', 455) ('auspol', 351) ('Incident', 314) ('victraffic', 239) )
-C3: 53306 posts, (('melbourne', 348) ('Incident', 317) ('victraffic', 297) ('Melbourne', 270) ('FireAlarm', 232) )
-B3: 26560 posts, (('Incident', 222) ('StructureFire', 177) ('NonStructureFire', 159) ('FireAlarm', 158) ('victraffic', 139) )
-C4: 19702 posts, (('auspol', 271) ('Incident', 195) ('StructureFire', 179) ('SaveDallas', 169) ('victraffic', 144) )
-B1: 16507 posts, (('Melbourne', 136) ('StructureFire', 134) ('vote5sos', 130) ('NonStructureFire', 128) ('Incident', 111) )
-D4: 14481 posts, (('nowplaying', 1730) ('KarishmaTannaCraze', 83) ('victraffic', 79) ('StructureFire', 70) ('NoblePark', 67) )
-D3: 13367 posts, (('Incident', 67) ('beach', 65) ('victraffic', 63) ('StructureFire', 62) ('melbourne', 57) )
-C1: 8415 posts, (('jackfollowme', 148) ('Incident', 112) ('JACKDM', 106) ('StructureFire', 98) ('CamTo4Mill', 73) )
-B4: 5449 posts, (('NonStructureFire', 55) ('Incident', 49) ('StructureFire', 49) ('Melbourne', 42) ('SmallzyWelcomesHome5SOS', 27) )
-A3: 5019 posts, (('RAW', 40) ('StructureFire', 38) ('SaveConstantine', 30) ('NonStructureFire', 30) ('Epping', 19) )
-A2: 4165 posts, (('krazykristmas', 177) ('NonStructureFire', 72) ('StructureFire', 70) ('rcl1milliongiveaway', 59) ('EGsHolidayGiveaway', 57) )
-C5: 4106 posts, (('melbourne', 38) ('victraffic', 31) ('Melbourne', 22) ('photo', 20) ('1000steps', 16) )
-D5: 3248 posts, (('Lost', 28) ('Cat', 28) ('SomebodyToCon', 27) ('FindJasper', 23) ('victraffic', 20) )
-A1: 2533 posts, (('tattoo', 14) ('worldjudo2014', 11) ('VOBIS', 11) ('BBAU', 11) ('judo', 10) )
-A4: 308 posts, (('auspol', 7) ('LNP', 6) ('qldvotes', 6) ('libspill', 5) ('photo', 3) )
+The rank of Grid boxes:
+C2: 145096 posts,
+B2: 79633 posts,
+C3: 53299 posts,
+B3: 26550 posts,
+C4: 19699 posts,
+B1: 16507 posts,
+D4: 14497 posts,
+D3: 13388 posts,
+C1: 8415 posts,
+B4: 5450 posts,
+A3: 5036 posts,
+A2: 4165 posts,
+C5: 4105 posts,
+D5: 3248 posts,
+A1: 2533 posts,
+A4: 310 posts,
+------------------------------
+The rank of the top 5 hashtags in each Grid boxes:
+C2: ((#melbourne, 13467), (#job, 2127), (#australia, 1784), (#jobs, 1300), (#hiring, 986), )
+B2: ((#melbourne, 1028), (#auspol, 356), (#incident, 314), (#victraffic, 239), (#firealarm, 237), )
+C3: ((#melbourne, 614), (#incident, 317), (#victraffic, 297), (#firealarm, 232), (#structurefire, 219), )
+B3: ((#incident, 222), (#melbourne, 213), (#structurefire, 177), (#nonstructurefire, 159), (#firealarm, 158), )
+C4: ((#auspol, 281), (#incident, 195), (#structurefire, 179), (#savedallas, 177), (#victraffic, 144), )
+B1: ((#melbourne, 226), (#structurefire, 134), (#vote5sos, 130), (#nonstructurefire, 128), (#incident, 111), )
+D4: ((#nowplaying, 1730), (#karishmatannacraze, 83), (#victraffic, 79), (#structurefire, 70), (#noblepark, 69), )
+D3: ((#melbourne, 99), (#beach, 67), (#incident, 67), (#victraffic, 63), (#structurefire, 62), )
+C1: ((#jackfollowme, 148), (#incident, 112), (#jackdm, 111), (#structurefire, 98), (#camto4mill, 73), )
+B4: ((#melbourne, 60), (#nonstructurefire, 55), (#incident, 49), (#structurefire, 49), (#fire, 31), )
+A3: ((#raw, 40), (#structurefire, 38), (#saveconstantine, 30), (#nonstructurefire, 30), (#epping, 21), )
+A2: ((#krazykristmas, 177), (#nonstructurefire, 72), (#structurefire, 70), (#rcl1milliongiveaway, 59), (#egsholidaygiveaway, 57), )
+C5: ((#melbourne, 60), (#victraffic, 31), (#photo, 20), (#1000steps, 18), (#australia, 18), )
+D5: ((#lost, 30), (#cat, 28), (#somebodytocon, 27), (#melbourne, 25), (#findjasper, 23), )
+A1: ((#bbau, 15), (#melbourne, 15), (#tattoo, 14), (#worldjudo2014, 11), (#vobis, 11), )
+A4: ((#auspol, 7), (#lnp, 6), (#qldvotes, 6), (#libspill, 5), (#photo, 3), (#incident, 3), (#grassfire, 3), (#vicfires, 3), (#happiness, 3), (#birthday, 3), )
 
-real	0m35.886s
-user	2m9.481s
-sys	0m2.441s
+real	0m30.831s
+user	0m0.014s
+sys	0m0.029s
