@@ -168,7 +168,16 @@ def orderTheResultIntoList(resultDic):
   for key, value in resultDic.items():
     hashtagDic = value['hashtags']
     hashList = [(k, hashtagDic[k]) for k in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
-    value['hashtags'] = hashList[:5]
+    # if sixth is equal to fifth, then get the last index that is equal to the fifth hashtag
+    topFiveIndex = 5
+    lastPostNumber = hashList[4][1]
+    if lastPostNumber == hashList[5][1]:
+      for i, hashtag in enumerate(hashList[5:]):
+        if hashtag[1] < lastPostNumber:
+          topFiveIndex += i
+          break
+
+    value['hashtags'] = hashList[:topFiveIndex]
 
   resultList = [(k, resultDic[k]) for k in sorted(resultDic, key=lambda x: resultDic[x]['posN'], reverse=True)]
   return resultList
