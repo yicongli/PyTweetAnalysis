@@ -38,17 +38,16 @@ def getMelbourneGrids():
   
   return grids 
 
-def prettyPrint(resultList):
-  #print pretty
+def printOut(resultList):
   print('The rank of Grid boxes:')
-  for value in resultList:
-    print('%s: %d posts,' % (value[0], value[1]['posN']))
+  for post in resultList:
+    print('%s: %d posts,' % (post[0], post[1]))
   
   print('-'*30)
   print('The rank of the top 5 hashtags in each Grid boxes:')
-  for value in resultList:
-    print('%s: (' % (value[0]), end='')
-    for hashtag in value[1]['hashtags']:
+  for post in resultList:
+    print('%s: (' % (post[0]), end='')
+    for hashtag in post[2]:
       print('(#%s, %d), ' % (hashtag[0], hashtag[1]), end='')
     print(')')
 
@@ -157,7 +156,8 @@ if __name__ == "__main__":
       grid[2] = topFives
 
     # Print out the result
-    for post in sortedByPosts:
-      print (post[0], post[1], post[2])
+    # for post in sortedByPosts:
+    #   print (post[0], post[1], post[2])
+    printOut(sortedByPosts)
     
     
