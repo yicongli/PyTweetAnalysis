@@ -1,5 +1,6 @@
 oldData
-.vscode
+.vscode/
 __pycache__/
+twitter-melb.json
 
 \.DS_Store
