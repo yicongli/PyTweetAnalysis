@@ -38,59 +38,6 @@ def getMelbourneGrids():
   
   return grids 
 
-def removeRedundantHashtags(resultDic):
-  """
-  remove the hashtags that have really small number in the result,
-  only reserve the largest ten tags
-  """
-  for key, value in resultDic.items():
-    hashtagDic = value['hashtags']
-    orderedList = [(k, hashtagDic[k]) for k in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
-    value['hashtags'] = dict(orderedList)#[:20])
-
-def handlingAllData(dataList):
-  """
-  combine all data in the list together and return data list
-  """
-  result = initResultDic()
-  for data in dataList:
-    for key, value in data.items():
-      totalNum = result[key]['posN']
-      result[key]['posN'] = value['posN'] + totalNum
-
-      hashtags = value['hashtags']
-      for hashtag, value in hashtags.items():
-          hashtagNum = 0
-          try:
-            hashtagNum = result[key]['hashtags'][hashtag]
-          except KeyError:
-            result[key]['hashtags'][hashtag] = hashtagNum
-          finally:
-            result[key]['hashtags'][hashtag] = hashtagNum + value
-
-  return result
-
-def orderTheResultIntoList(resultDic):
-  """
-  Sort the Area by post number, sort the hash tags of each area by number 
-  """
-  for key, value in resultDic.items():
-    hashtagDic = value['hashtags']
-    hashList = [(k, hashtagDic[k]) for k in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
-    # if sixth is equal to fifth, then get the last index that is equal to the fifth hashtag
-    topFiveIndex = 5
-    lastPostNumber = hashList[4][1]
-    if lastPostNumber == hashList[5][1]:
-      for i, hashtag in enumerate(hashList[5:]):
-        if hashtag[1] < lastPostNumber:
-          topFiveIndex += i
-          break
-
-    value['hashtags'] = hashList[:topFiveIndex]
-
-  resultList = [(k, resultDic[k]) for k in sorted(resultDic, key=lambda x: resultDic[x]['posN'], reverse=True)]
-  return resultList
-
 def prettyPrint(resultList):
   #print pretty
   print('The rank of Grid boxes:')
@@ -147,14 +94,13 @@ def extractInfoFromTweet(tweetData, grids):
           postNum = grids[gridId]["numPosts"]
           grids[gridId]["numPosts"] = postNum + 1
           hashtags = tweet["doc"]["entities"]["hashtags"]
-          if len(hashtags) > 0:
-            for hashtag in hashtags:
-              hashtag = hashtag.lower() # Case insensitive
-              if hashtag in grids[gridId]["hashtags"]:
-                oldFrequency = grids[gridId]["hashtags"][hashtag]
-                grids[gridId]["hashtags"][hashtag] = oldFrequency + 1
-              else:
-                grids[gridId]["hashtags"][hashtag] = 1
+          for hashtag in hashtags:
+            hashtagText = hashtag["text"].lower() # Case insensitive
+            if hashtagText in grids[gridId]["hashtags"]:
+              oldFrequency = grids[gridId]["hashtags"][hashtagText]
+              grids[gridId]["hashtags"][hashtagText] = oldFrequency + 1
+            else:
+              grids[gridId]["hashtags"][hashtagText] = 1
     except:
       continue
 
@@ -171,22 +117,40 @@ if __name__ == "__main__":
   #Scatter the data into slaves, then gather into master
   if rank == 0 and size < 2:
     extractInfoFromTweet(tweetParts, grids)
-    result = grids
+    result = [grids]
   else:
     part = comm.scatter(tweetParts, root = 0)
     extractInfoFromTweet(part, grids)
     result = comm.gather(grids, root = 0)
-    print (rank, result)
+    # if result != None:
+    #   for res in result:
+    #     print (rank, res)
+    #     print ()
 
-  # removeRedundantHashtags(result) # may need to remove the hashtag that have really small number
+  # TODO: Remove redundant hashtags? what's for???
 
-  # gather data all together
-  # data = comm.gather(result)
-  # if comm.rank == 0:
-  #   if comm.size != 1:
-  #     # combine all result together into one dict
-  #     result = handlingAllData(data)
-  #   #sort data in the list
-  #   orderedList = orderTheResultIntoList(result)
-  #   #print data
-  #   prettyPrint(orderedList)
+  if rank == 0:
+    # Combine the results
+    resultGrids = getMelbourneGrids()
+    for tweetPart in result:
+      for gridId in tweetPart:
+        currentNumPosts = resultGrids[gridId]["numPosts"]
+        resultGrids[gridId]["numPosts"] = currentNumPosts + tweetPart[gridId]["numPosts"]
+
+        for hashtag in tweetPart[gridId]["hashtags"]:
+          if hashtag in resultGrids[gridId]["hashtags"]:
+            resultGrids[gridId]["hashtags"][hashtag] += tweetPart[gridId]["hashtags"][hashtag]
+          else:
+            resultGrids[gridId]["hashtags"][hashtag] = tweetPart[gridId]["hashtags"][hashtag]
+
+    # Sort result grids in order
+    sortedResults = sorted(resultGrids, key = lambda gridId: resultGrids[gridId]["numPosts"], reversed = True)
+    
+    # Print out the result
+    for gridId in resultGrids:
+      check = 0
+      for tag in resultGrids[gridId]["hashtags"]:
+        check += resultGrids[gridId]["hashtags"][tag]
+      print (gridId, resultGrids[gridId]["numPosts"], check)
+    
+    
