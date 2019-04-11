@@ -156,8 +156,6 @@ if __name__ == "__main__":
       grid[2] = topFives
 
     # Print out the result
-    # for post in sortedByPosts:
-    #   print (post[0], post[1], post[2])
     printOut(sortedByPosts)
     
     
