@@ -1,18 +1,7 @@
 import sys
 import json
 from mpi4py import MPI
-from operator import itemgetter
-import os.path
-
-# class CaseInsensitiveDict(dict):
-#   """
-#   the dict which is case-insensitive
-#   """
-#   def __setitem__(self, key, value):
-#       super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
-
-#   def __getitem__(self, key):
-#       return super(CaseInsensitiveDict, self).__getitem__(key.lower())
+import numpy as np
 
 MELBOURNE_GRID_FILE = "melbGrid.json"
 
@@ -28,7 +17,7 @@ def getTwitterFile():
 
 def getMelbourneGrids():
   """
-  Get the range of x and y for each grid box
+  Read Melbourne grid file, then return the information of each grid
   """
   melbGridFile = open(MELBOURNE_GRID_FILE, 'r')
   data = melbGridFile.read()
@@ -48,75 +37,6 @@ def getMelbourneGrids():
     grids[feature["properties"]["id"]] = {"coordinates": coordinates, "numPosts": 0, "hashtags": {}}
   
   return grids 
-
-def initResultDic():
-  """
-  init the result dic with the grid dic
-  This result dic is used to store all the info that collected from json data
-  """
-  resultDic = {}
-  melbGrids = getGeoLocation()
-  for key in melbGrids:
-    resultDic[key] = {'posN':0, 'hashtags':CaseInsensitiveDict()}
-  return resultDic
-
-def extractInfoFromData(data, resultDic):
-  """
-  This function is used to extract the infomation from
-  """
-  try:
-    dataCoord = data['doc']['coordinates']['coordinates']
-  except TypeError:
-    return
-  
-  if len(dataCoord) < 2:
-    print('No coordinate')
-    return
-
-  melbGrids = getGeoLocation()
-  for key, value in melbGrids.items():
-    # if the value in the specific area, then store the data into the result dic
-    if (dataCoord[0] <= value['xmax'] and dataCoord[0] > value['xmin'] 
-    and dataCoord[1] < value['ymax'] and dataCoord[1] >= value['ymin']):
-      postNum = resultDic[key]['posN']
-      resultDic[key]['posN'] = postNum + 1
-      hashtags = data['doc']['entities']['hashtags']
-      # if has hashtags, then record the hash dic
-      if len(hashtags) > 0:
-        for hashtag in hashtags:
-          hashtagNum = 0
-          try:
-            hashtagNum = resultDic[key]['hashtags'][hashtag['text']]
-          except KeyError:
-            resultDic[key]['hashtags'][hashtag['text']] = hashtagNum
-          finally:
-            resultDic[key]['hashtags'][hashtag['text']] = hashtagNum + 1
-
-def parseJsonDataWithConf(fileName, startLinePoint, size):
-  """
-  parse json data according to current arranged period
-  """
-  result = initResultDic()
-
-  with open(fileName, 'r') as file:
-    file.seek(startLinePoint) # jump to the start point
-    for i, line in enumerate(file):
-      # if larger than current size, then return directly
-      if(i >= size): 
-        return result
-      # extract key info from data
-      try:
-          data = json.loads(line[:-2])
-          extractInfoFromData(data, result)
-      except json.decoder.JSONDecodeError:
-        # NOTE: In what case we need to extract line[:-1]?
-        try:
-          data = json.loads(line[:-1]) 
-          extractInfoFromData(data, result)
-        except json.decoder.JSONDecodeError:
-          print('Error on line', i + 1, ':\n', repr(line))
-  
-  return result
 
 def removeRedundantHashtags(resultDic):
   """
@@ -185,29 +105,88 @@ def prettyPrint(resultList):
       print('(#%s, %d), ' % (hashtag[0], hashtag[1]), end='')
     print(')')
 
+def splitData(twitterFile, rank, size):
+  """
+  read all twitter data in master
+    if the number of processors is more than 1, split the data into small parts. The total number of parts is equal to the number of processors
+    else do not need to split
+  """
+  # Master 
+  if rank == 0:
+    tweetsData = []
+    with open(twitterFile, 'r') as f:
+      for i, line in enumerate(f):
+        try:
+          tweet = json.loads(line[:-2])
+          tweetsData.append(tweet)
+        except:
+          try:
+            tweet = json.loads(line[:-1])
+            tweetsData.append(tweet)
+          except:
+            print ("cannot read line ", i)
+            continue
+    if size > 1:
+      tweetParts = np.array_split(tweetsData, size)
+    else:
+      tweetParts = tweetsData
+  else: # Slaves 
+    tweetParts = None 
+  
+  return tweetParts
+
+def extractInfoFromTweet(tweetData, grids):
+  for tweet in tweetData:
+    try:        
+      coord = tweet["doc"]["coordinates"]["coordinates"]
+      if len(coord) < 2:
+          continue
+      for gridId in grids:
+        if (coord[0] <= grids[gridId]["coordinates"]["xmax"] and coord[0] > grids[gridId]["coordinates"]["xmin"] \
+          and coord[1] < grids[gridId]["coordinates"]["ymax"] and coord[1] >= grids[gridId]["coordinates"]["ymin"]):
+          postNum = grids[gridId]["numPosts"]
+          grids[gridId]["numPosts"] = postNum + 1
+          hashtags = tweet["doc"]["entities"]["hashtags"]
+          if len(hashtags) > 0:
+            for hashtag in hashtags:
+              hashtag = hashtag.lower() # Case insensitive
+              if hashtag in grids[gridId]["hashtags"]:
+                oldFrequency = grids[gridId]["hashtags"][hashtag]
+                grids[gridId]["hashtags"][hashtag] = oldFrequency + 1
+              else:
+                grids[gridId]["hashtags"][hashtag] = 1
+    except:
+      continue
+
 if __name__ == "__main__":
   twitterFile = getTwitterFile()
+  grids = getMelbourneGrids()
 
   comm = MPI.COMM_WORLD
   size = comm.size
   rank = comm.rank
 
-  # Master 
-  if rank == 0:
+  tweetParts = splitData(twitterFile, rank, size)
 
+  #Scatter the data into slaves, then gather into master
+  if rank == 0 and size < 2:
+    extractInfoFromTweet(tweetParts, grids)
+    result = grids
+  else:
+    part = comm.scatter(tweetParts, root = 0)
+    extractInfoFromTweet(part, grids)
+    result = comm.gather(grids, root = 0)
+    print (rank, result)
 
-  # numLinesEachProcessor = int(CONST_SIZE / numProcessors) # get the range of iteration
-  # startLineNum = comm.rank * numLinesEachProcessor + 1
-  # result = parseJsonDataWithConf(twitterFile, listConf[startLineNum], numLinesEachProcessor)
   # removeRedundantHashtags(result) # may need to remove the hashtag that have really small number
 
   # gather data all together
-  data = comm.gather(result)
-  if comm.rank == 0:
-    if comm.size != 1:
-      # combine all result together into one dict
-      result = handlingAllData(data)
-    #sort data in the list
-    orderedList = orderTheResultIntoList(result)
-    #print data
-    prettyPrint(orderedList)
+  # data = comm.gather(result)
+  # if comm.rank == 0:
+  #   if comm.size != 1:
+  #     # combine all result together into one dict
+  #     result = handlingAllData(data)
+  #   #sort data in the list
+  #   orderedList = orderTheResultIntoList(result)
+  #   #print data
+  #   prettyPrint(orderedList)
