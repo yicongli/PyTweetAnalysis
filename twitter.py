@@ -71,7 +71,6 @@ def splitData(twitterFile, rank, size):
             tweet = json.loads(line[:-1])
             tweetsData.append(tweet)
           except:
-            print ("cannot read line ", i)
             continue
     if size > 1:
       tweetParts = np.array_split(tweetsData, size)
@@ -122,10 +121,6 @@ if __name__ == "__main__":
     part = comm.scatter(tweetParts, root = 0)
     extractInfoFromTweet(part, grids)
     result = comm.gather(grids, root = 0)
-    # if result != None:
-    #   for res in result:
-    #     print (rank, res)
-    #     print ()
 
   # TODO: Remove redundant hashtags? what's for???
 
@@ -144,13 +139,25 @@ if __name__ == "__main__":
             resultGrids[gridId]["hashtags"][hashtag] = tweetPart[gridId]["hashtags"][hashtag]
 
     # Sort result grids in order
-    sortedResults = sorted(resultGrids, key = lambda gridId: resultGrids[gridId]["numPosts"], reversed = True)
+    sortedGridIds = sorted(resultGrids, key = lambda gridId: resultGrids[gridId]["numPosts"], reverse = True)
+    sortedByPosts = [[id, resultGrids[id]["numPosts"], resultGrids[id]["hashtags"]] for id in sortedGridIds]
     
+    # In each grid, sort the hashtags in order
+    for grid in sortedByPosts:
+      hashtags = grid[2]
+      sortedHashtags = [(tag, hashtags[tag]) for tag in sorted(hashtags, key = lambda tag : hashtags[tag], reverse = True)]
+      topFives = sortedHashtags[:5]
+      if len(sortedHashtags) >= 4:
+        fifthRanking = sortedHashtags[4]
+        for nextTag in sortedHashtags[5:]:
+          if nextTag[1] == fifthRanking[1]:
+            topFives.append(nextTag)
+          else:
+            break
+      grid[2] = topFives
+
     # Print out the result
-    for gridId in resultGrids:
-      check = 0
-      for tag in resultGrids[gridId]["hashtags"]:
-        check += resultGrids[gridId]["hashtags"][tag]
-      print (gridId, resultGrids[gridId]["numPosts"], check)
+    for post in sortedByPosts:
+      print (post[0], post[1], post[2])
     
     
