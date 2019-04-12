@@ -69,50 +69,47 @@ def getStartingPoints(twitterFile):
     json.dump(startingPoints, output)
   return startingPoints
 
-def getTweetsFromStartPoints(twitterFile, startingPoints):
+def readTweetsFromStartPoints(twitterFile, startingPoints, grids):
   """
   From the starting point, seek the line in twitter file and read that line
   """
-  tweetParts = []
   for startingPoint in startingPoints:
     with open(twitterFile, 'r') as f:
       f.seek(startingPoint)
       try:
         line = f.readline()
         tweet = json.loads(line[:-2])
-        tweetParts.append(tweet)
+        extractInfoFromTweet(tweet, grids)
       except:
         try:
           tweet = json.loads(line[:-1])
-          tweetParts.append(tweet)
+          extractInfoFromTweet(tweet, grids)
         except:
           continue
-  return tweetParts
-
-def extractInfoFromTweet(tweetData, grids):
+          
+def extractInfoFromTweet(tweet, grids):
   """
   Count the number of posts and the frequencies of hashtags
   """
-  for tweet in tweetData:
-    try:        
-      coord = tweet["doc"]["coordinates"]["coordinates"]
-      if len(coord) < 2:
-          continue
-      for gridId in grids:
-        if (coord[0] <= grids[gridId]["coordinates"]["xmax"] and coord[0] > grids[gridId]["coordinates"]["xmin"] \
-          and coord[1] < grids[gridId]["coordinates"]["ymax"] and coord[1] >= grids[gridId]["coordinates"]["ymin"]):
-          postNum = grids[gridId]["numPosts"]
-          grids[gridId]["numPosts"] = postNum + 1
-          hashtags = tweet["doc"]["entities"]["hashtags"]
-          for hashtag in hashtags:
-            hashtagText = hashtag["text"].lower() # Case insensitive
-            if hashtagText in grids[gridId]["hashtags"]:
-              oldFrequency = grids[gridId]["hashtags"][hashtagText]
-              grids[gridId]["hashtags"][hashtagText] = oldFrequency + 1
-            else:
-              grids[gridId]["hashtags"][hashtagText] = 1
-    except:
-      continue
+  try:        
+    coord = tweet["doc"]["coordinates"]["coordinates"]
+    if len(coord) < 2:
+      return None
+    for gridId in grids:
+      if (coord[0] <= grids[gridId]["coordinates"]["xmax"] and coord[0] > grids[gridId]["coordinates"]["xmin"] \
+        and coord[1] < grids[gridId]["coordinates"]["ymax"] and coord[1] >= grids[gridId]["coordinates"]["ymin"]):
+        postNum = grids[gridId]["numPosts"]
+        grids[gridId]["numPosts"] = postNum + 1
+        hashtags = tweet["doc"]["entities"]["hashtags"]
+        for hashtag in hashtags:
+          hashtagText = hashtag["text"].lower() # Case insensitive
+          if hashtagText in grids[gridId]["hashtags"]:
+            oldFrequency = grids[gridId]["hashtags"][hashtagText]
+            grids[gridId]["hashtags"][hashtagText] = oldFrequency + 1
+          else:
+            grids[gridId]["hashtags"][hashtagText] = 1
+  except:
+    return None
 
 if __name__ == "__main__":
   # Get the twitter file name and read the Melbourne grids
@@ -133,25 +130,26 @@ if __name__ == "__main__":
 
   # Split the starting points array in the master node if the number of processors is more than 1
   if rank == 0:
-    if size > 1:
+    #if size > 1:
       tweetStartingPoints = np.array_split(allStartingPoints, size)
-    else:
-      tweetStartingPoints = allStartingPoints
+    #else:
+    #  tweetStartingPoints = allStartingPoints
   else:
     tweetStartingPoints = None 
 
   # Scatter and Gather
-  if rank == 0 and size < 2:
-    # If there is only one processor, no need to scatter
-    tweetParts = getTweetsFromStartPoints(twitterFile, tweetStartingPoints)
-    extractInfoFromTweet(tweetParts, grids)
-    result = [grids]
-  else:
-    #Scatter the array of all starting points into slaves, then gather into master
-    startingPointsChunk = comm.scatter(tweetStartingPoints, root = 0)
-    part = getTweetsFromStartPoints(twitterFile, startingPointsChunk)
-    extractInfoFromTweet(part, grids)
-    result = comm.gather(grids, root = 0)
+  # if rank == 0 and size < 2:
+  #   # If there is only one processor, no need to scatter
+  #   tweetParts = getTweetsFromStartPoints(twitterFile, tweetStartingPoints)
+  #   extractInfoFromTweet(tweetParts, grids)
+  #   result = [grids]
+  # else:
+  
+  #Scatter the array of all starting points into slaves, then gather into master
+  startingPointsChunk = comm.scatter(tweetStartingPoints, root = 0)
+  readTweetsFromStartPoints(twitterFile, startingPointsChunk, grids)
+  # extractInfoFromTweet(part, grids)
+  result = comm.gather(grids, root = 0)
 
   # In the master node, gather all the results and sort them in order 
   if rank == 0:
