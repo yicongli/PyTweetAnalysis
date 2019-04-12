@@ -2,6 +2,7 @@ import sys
 import json
 from mpi4py import MPI
 import numpy as np
+import os.path
 
 MELBOURNE_GRID_FILE = "melbGrid.json"
 
@@ -54,28 +55,19 @@ def printOut(resultList):
       print('(#%s, %d), ' % (hashtag[0], hashtag[1]), end='')
     print(')')
 
-def splitData(twitterFile, rank, size):
+def getStartingPoints(twitterFile):
   """
   Get all the starting points of every line in twitter file
-    if the number of processors is more than 1, split the array into small parts. The total number of parts is equal to the number of processors
-    else do not need to split
   """
-  # Master 
-  if rank == 0:
-    startingPoints = []
-    length = 0
-    with open(twitterFile, 'rb') as f:
-      for line in f:
-        startingPoints.append(length)
-        length += len(line)
-    if size > 1:
-      tweetStartingPoints = np.array_split(startingPoints, size)
-    else:
-      tweetStartingPoints = startingPoints
-  else: # Slaves 
-    tweetStartingPoints = None 
-  
-  return tweetStartingPoints
+  startingPoints = []
+  length = 0
+  with open(twitterFile, 'rb') as f:
+    for line in f:
+      startingPoints.append(length)
+      length += len(line)
+  with open('startingPoints.json', 'w') as output:
+    json.dump(startingPoints, output)
+  return startingPoints
 
 def getTweetsFromStartPoints(twitterFile, startingPoints):
   """
@@ -123,15 +115,31 @@ def extractInfoFromTweet(tweetData, grids):
       continue
 
 if __name__ == "__main__":
+  # Get the twitter file name and read the Melbourne grids
   twitterFile = getTwitterFile()
   grids = getMelbourneGrids()
 
+  # Initialise mpi
   comm = MPI.COMM_WORLD
   size = comm.size
   rank = comm.rank
   
-  tweetStartingPoints = splitData(twitterFile, rank, size)
+  # Get the starting points of every line in twitter file
+  if os.path.isfile("startingPoints.json"):
+    allStartingPoints = json.load("startingPoints.json")
+  else:
+    allStartingPoints = getStartingPoints(twitterFile)
 
+  # Split the starting points array in the master node if the number of processors is more than 1
+  if rank == 0:
+    if size > 1:
+      tweetStartingPoints = np.array_split(allStartingPoints, size)
+    else:
+      tweetStartingPoints = allStartingPoints
+  else:
+    tweetStartingPoints = None 
+
+  # Scatter and Gather
   if rank == 0 and size < 2:
     # If there is only one processor, no need to scatter
     tweetParts = getTweetsFromStartPoints(twitterFile, tweetStartingPoints)
