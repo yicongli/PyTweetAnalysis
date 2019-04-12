@@ -77,8 +77,8 @@ def getTweetsFromStartPoints(twitterFile, startingPoints):
   for startingPoint in startingPoints:
     with open(twitterFile, 'r') as f:
       f.seek(startingPoint)
-      line = f.readline()
       try:
+        line = f.readline()
         tweet = json.loads(line[:-2])
         tweetParts.append(tweet)
       except:
