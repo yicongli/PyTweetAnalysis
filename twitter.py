@@ -126,7 +126,8 @@ if __name__ == "__main__":
   
   # Get the starting points of every line in twitter file
   if os.path.isfile("startingPoints.json"):
-    allStartingPoints = json.load("startingPoints.json")
+    jsonData = open("startingPoints.json")
+    allStartingPoints = json.load(jsonData)
   else:
     allStartingPoints = getStartingPoints(twitterFile)
 
