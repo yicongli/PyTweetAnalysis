@@ -79,16 +79,16 @@ def getTweetsFromStartPoints(twitterFile, startingPoints):
   for startingPoint in startingPoints:
     with open(twitterFile, 'r') as f:
       f.seek(startingPoint)
-      for line in f:
+      line = f.readline()
+      try:
+        tweet = json.loads(line[:-2])
+        tweetParts.append(tweet)
+      except:
         try:
-          tweet = json.loads(line[:-2])
+          tweet = json.loads(line[:-1])
           tweetParts.append(tweet)
         except:
-          try:
-            tweet = json.loads(line[:-1])
-            tweetParts.append(tweet)
-          except:
-            continue
+          continue
   return tweetParts
 
 def extractInfoFromTweet(tweetData, grids):
@@ -122,6 +122,11 @@ if __name__ == "__main__":
   rank = comm.rank
   
   tweetStartingPoints = splitData(twitterFile, rank, size)
+  #print (tweetStartingPoints)
+  # f = open(twitterFile, 'r')
+  # f.seek(3671)
+  # print (f.readline())
+
 
   #Scatter the data into slaves, then gather into master
   if rank == 0 and size < 2:
