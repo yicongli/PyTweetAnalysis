@@ -99,12 +99,12 @@ def extractInfoFromData(data, resultDic):
       # if has hashtags, then record the hash dic
       if len(hashtags) > 0:
         for hashtag in hashtags:
-          hashtagText = hashtag['text'].lower()
+          hashtagText = hashtag['text'].lower() # case insensitive
           if hashtagText in resultDic[key]['hashtags']:
             hashtagNum = resultDic[key]['hashtags'][hashtagText]
-            resultDic[key]['hashtags'][hashtag['text']] = hashtagNum + 1
+            resultDic[key]['hashtags'][hashtagText] = hashtagNum + 1
           else:
-            resultDic[key]['hashtags'][hashtag['text']] = 1
+            resultDic[key]['hashtags'][hashtagText] = 1
 
 def inputFileName():
   """
@@ -128,11 +128,11 @@ def handlingAllData(dataList):
 
       hashtags = value['hashtags']
       for hashtag, frequency in hashtags.items():
-          if hashtag in result[key]['hashtags']:
-            hashtagNum = result[key]['hashtags'][hashtag]
-            result[key]['hashtags'][hashtag] = hashtagNum + frequency
-          else:
-            result[key]['hashtags'][hashtag] = frequency
+        if hashtag in result[key]['hashtags']:
+          hashtagNum = result[key]['hashtags'][hashtag]
+          result[key]['hashtags'][hashtag] = hashtagNum + frequency
+        else:
+          result[key]['hashtags'][hashtag] = frequency
   return result
 
 def orderTheResultIntoList(resultDic):
