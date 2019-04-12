@@ -29,11 +29,11 @@ C1: ((#jackfollowme, 148), (#incident, 112), (#jackdm, 111), (#structurefire, 98
 B4: ((#melbourne, 60), (#nonstructurefire, 55), (#incident, 49), (#structurefire, 49), (#fire, 31), )
 A3: ((#raw, 40), (#structurefire, 38), (#saveconstantine, 30), (#nonstructurefire, 30), (#epping, 21), )
 A2: ((#krazykristmas, 177), (#nonstructurefire, 72), (#structurefire, 70), (#rcl1milliongiveaway, 59), (#egsholidaygiveaway, 57), )
-C5: ((#melbourne, 60), (#victraffic, 31), (#photo, 20), (#1000steps, 18), (#australia, 18), )
+C5: ((#melbourne, 60), (#victraffic, 31), (#photo, 20), (#australia, 18), (#1000steps, 18), )
 D5: ((#lost, 30), (#cat, 28), (#somebodytocon, 27), (#melbourne, 25), (#findjasper, 23), )
-A1: ((#bbau, 15), (#melbourne, 15), (#tattoo, 14), (#worldjudo2014, 11), (#vobis, 11), )
+A1: ((#melbourne, 15), (#bbau, 15), (#tattoo, 14), (#worldjudo2014, 11), (#vobis, 11), )
 A4: ((#auspol, 7), (#lnp, 6), (#qldvotes, 6), (#libspill, 5), (#photo, 3), (#incident, 3), (#grassfire, 3), (#vicfires, 3), (#happiness, 3), (#birthday, 3), )
 
-real	0m36.815s
-user	4m41.255s
-sys	0m5.485s
+real	3m54.411s
+user	3m41.741s
+sys	0m11.428s

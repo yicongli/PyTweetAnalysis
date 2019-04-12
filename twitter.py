@@ -39,7 +39,7 @@ def getStartingPoints(fileName):
         length += len(each)
 
   # store the starting point of each line into file
-  with open('conf.json', 'w') as outfile:
+  with open('startingPoints.json', 'w') as outfile:
     json.dump(dict_pos, outfile)
   return dict_pos
 
