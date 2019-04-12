@@ -145,9 +145,9 @@ def orderTheResultIntoList(resultDic):
     topFives = hashList[:5]
     if len(hashList) > 5:
       fifthRanking = hashList[4][1]
-      for hashtag in hashList[5:]:
-        if hashtag[1] == fifthRanking:
-          topFives.append(hashtag)
+      for nextTag in hashList[5:]:
+        if nextTag[1] == fifthRanking:
+          topFives.append(nextTag)
         else:
           break
     value['hashtags'] = topFives 
@@ -171,8 +171,8 @@ if __name__ == "__main__":
   twitterFile = inputFileName()
 
   #load configuration of big json data
-  if os.path.exists('conf.json'):
-    with open('conf.json') as json_data:
+  if os.path.exists('startingPoints.json'):
+    with open('startingPoints.json') as json_data:
       startingPoints = json.load(json_data)
   else:
     startingPoints = getStartingPoints(twitterFile)
