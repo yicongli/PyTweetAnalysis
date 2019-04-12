@@ -1,17 +1,7 @@
 import sys
 import json
 from mpi4py import MPI
-from operator import itemgetter
-
-class CaseInsensitiveDict(dict):
-  """
-  the dict which is case-insensitive
-  """
-  def __setitem__(self, key, value):
-      super(CaseInsensitiveDict, self).__setitem__(key.lower(), value)
-
-  def __getitem__(self, key):
-      return super(CaseInsensitiveDict, self).__getitem__(key.lower())
+import os.path
 
 def getGeoLocation():
   """
@@ -35,9 +25,10 @@ def getGeoLocation():
 # global variable for storing geolocation grids
 g_grids = getGeoLocation() 
 
-def getFileLinePoint(fileName):
+def getStartingPoints(fileName):
   """
-  get the line start point, only run in testing
+  Get the line start point of every line in twitter file
+  Run this before run the final application
   """
   dict_pos = []
   length = 0
@@ -46,7 +37,8 @@ def getFileLinePoint(fileName):
     for each in file:
         dict_pos.append(length)
         length += len(each)
-  # store the startpoint of each line into file
+
+  # store the starting point of each line into file
   with open('conf.json', 'w') as outfile:
     json.dump(dict_pos, outfile)
   return dict_pos
@@ -58,33 +50,31 @@ def initResultDic():
   """
   resultDic = {}
   for key, value in g_grids.items():
-    resultDic[key] = {'posN':0, 'hashtags':CaseInsensitiveDict()}
+    resultDic[key] = {'posN':0, 'hashtags': {}}
   
   return resultDic
 
-def parseJsonDataWithConf(fileName, startLinePoint, size):
+def parseJsonDataWithConf(fileName, startLinePoint, maxRange):
   """
-  parse json data according to current arranged period
+  parse json data according to the starting point and the range
   """
   result = initResultDic()
 
   with open(fileName, 'r') as file:
     file.seek(startLinePoint) # jump to the start point
     for i, line in enumerate(file):
-      # if larger than current size, then return directly
-      if(i >= size): 
+      if(i >= maxRange): # if larger than current maxRange, then return directly
         return result
-      # extract key info from data
       try:
-          data = json.loads(line[:-2]) # TODO: May use regular formula to extract data
+          data = json.loads(line[:-2]) # extract key info from data
           extractInfoFromData(data, result)
-      except json.decoder.JSONDecodeError:
+      except:
         try:
           data = json.loads(line[:-1]) 
           extractInfoFromData(data, result)
-        except json.decoder.JSONDecodeError:
-          print('Error on line', i + 1, ':\n', repr(line))
-  
+        except:
+          return 
+
   return result
 
 def extractInfoFromData(data, resultDic):
@@ -97,7 +87,6 @@ def extractInfoFromData(data, resultDic):
     return
   
   if len(dataCoord) < 2:
-    print('No coordinate')
     return
 
   for key, value in g_grids.items():
@@ -110,13 +99,12 @@ def extractInfoFromData(data, resultDic):
       # if has hashtags, then record the hash dic
       if len(hashtags) > 0:
         for hashtag in hashtags:
-          hashtagNum = 0
-          try:
-            hashtagNum = resultDic[key]['hashtags'][hashtag['text']]
-          except KeyError:
-            resultDic[key]['hashtags'][hashtag['text']] = hashtagNum
-          finally:
+          hashtagText = hashtag['text'].lower()
+          if hashtagText in resultDic[key]['hashtags']:
+            hashtagNum = resultDic[key]['hashtags'][hashtagText]
             resultDic[key]['hashtags'][hashtag['text']] = hashtagNum + 1
+          else:
+            resultDic[key]['hashtags'][hashtag['text']] = 1
 
 def inputFileName():
   """
@@ -127,17 +115,6 @@ def inputFileName():
   else:
     fileName = sys.argv[1]
     return fileName
-
-
-def removeRedundantHashtags(resultDic):
-  """
-  remove the hashtags that has really small number in the result,
-  only reserve the largest ten tags
-  """
-  for key, value in resultDic.items():
-    hashtagDic = value['hashtags']
-    orderedList = [(k, hashtagDic[k]) for k in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
-    value['hashtags'] = dict(orderedList)#[:20])
 
 def handlingAllData(dataList):
   """
@@ -150,41 +127,34 @@ def handlingAllData(dataList):
       result[key]['posN'] = value['posN'] + totalNum
 
       hashtags = value['hashtags']
-      for hashtag, value in hashtags.items():
-          hashtagNum = 0
-          try:
+      for hashtag, frequency in hashtags.items():
+          if hashtag in result[key]['hashtags']:
             hashtagNum = result[key]['hashtags'][hashtag]
-          except KeyError:
-            result[key]['hashtags'][hashtag] = hashtagNum
-          finally:
-            result[key]['hashtags'][hashtag] = hashtagNum + value
-
+            result[key]['hashtags'][hashtag] = hashtagNum + frequency
+          else:
+            result[key]['hashtags'][hashtag] = frequency
   return result
 
 def orderTheResultIntoList(resultDic):
   """
-  Sort the Area by post number, sort the hash tags of each area by number 
+  Sort the grid by post number, sort the hash tags of each area by frequencies 
   """
   for key, value in resultDic.items():
     hashtagDic = value['hashtags']
-    hashList = [(k, hashtagDic[k]) for k in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
-    # if sixth is equal to fifth, then get the last index that is equal to the fifth hashtag
-    topFiveIndex = 5
-    lastPostNumber = hashList[4][1]
-    if lastPostNumber == hashList[5][1]:
-      for i, hashtag in enumerate(hashList[5:]):
-        if hashtag[1] < lastPostNumber:
-          topFiveIndex += i
+    hashList = [(tag, hashtagDic[tag]) for tag in sorted(hashtagDic, key=hashtagDic.get, reverse=True)]
+    topFives = hashList[:5]
+    if len(hashList) > 5:
+      fifthRanking = hashList[4][1]
+      for hashtag in hashList[5:]:
+        if hashtag[1] == fifthRanking:
+          topFives.append(hashtag)
+        else:
           break
-
-    value['hashtags'] = hashList[:topFiveIndex]
-
+    value['hashtags'] = topFives 
   resultList = [(k, resultDic[k]) for k in sorted(resultDic, key=lambda x: resultDic[x]['posN'], reverse=True)]
   return resultList
 
-
-def prettyPrint(resultList):
-  #print pretty
+def printOut(resultList):
   print('The rank of Grid boxes:')
   for value in resultList:
     print('%s: %d posts,' % (value[0], value[1]['posN']))
@@ -197,28 +167,30 @@ def prettyPrint(resultList):
       print('(#%s, %d), ' % (hashtag[0], hashtag[1]), end='')
     print(')')
 
-CONST_SIZE = 2500000  # the total line number of data is 2500000
-
 if __name__ == "__main__":
-  #load configuration of big json data
-  with open('conf.json') as json_data:
-    listConf = json.load(json_data)
-  
-  comm = MPI.COMM_WORLD
-  iterRange = int(CONST_SIZE / comm.size) # get the range of iteration
-  startLineNum = comm.rank * iterRange + 1
-
   twitterFile = inputFileName()
-  result = parseJsonDataWithConf(twitterFile,listConf[startLineNum], iterRange)
-  removeRedundantHashtags(result) # may need to remove the hashtag that have really small number
 
+  #load configuration of big json data
+  if os.path.exists('conf.json'):
+    with open('conf.json') as json_data:
+      startingPoints = json.load(json_data)
+  else:
+    startingPoints = getStartingPoints(twitterFile)
+
+  comm = MPI.COMM_WORLD
+  size = comm.size
+  rank = comm.rank 
+
+  totalLines = len(startingPoints) - 2
+  iterRange = int(totalLines / size) # get the range of iteration
+  startLineNum = rank * iterRange + 1
+
+  result = parseJsonDataWithConf(twitterFile, startingPoints[startLineNum], iterRange)
+  
   # gather data all together
   data = comm.gather(result)
-  if comm.rank == 0:
-    if comm.size != 1:
-      # combine all result together into one dict
-      result = handlingAllData(data)
-    #sort data in the list
-    orderedList = orderTheResultIntoList(result)
-    #print data
-    prettyPrint(orderedList)
+  if rank == 0:
+    if size != 1:
+      result = handlingAllData(data) # combine all result together into one dict
+    orderedList = orderTheResultIntoList(result) #sort data in the list
+    printOut(orderedList) #print data
