@@ -7,4 +7,4 @@
 
 module load Python/3.6.1-intel-2017.u2
 
-time mpiexec -np 8 python3 twitter.py bigTwitter.json # might need to use mpirun
+time mpirun -np 8 python3 twitter.py bigTwitter.json # might need to use mpirun

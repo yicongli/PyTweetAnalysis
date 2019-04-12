@@ -59,25 +59,36 @@ def splitData(twitterFile, rank, size):
   """
   # Master 
   if rank == 0:
-    tweetsData = []
+    startingPoints = []
+    length = 0
     with open(twitterFile, 'r') as f:
-      for i, line in enumerate(f):
+      for line in f:
+        startingPoints.append(length)
+        length += len(line)
+    if size > 1:
+      tweetStartingPoints = np.array_split(startingPoints, size)
+    else:
+      tweetStartingPoints = startingPoints
+  else: # Slaves 
+    tweetStartingPoints = None 
+  
+  return tweetStartingPoints
+
+def getTweetsFromStartPoints(twitterFile, startingPoints):
+  tweetParts = []
+  for startingPoint in startingPoints:
+    with open(twitterFile, 'r') as f:
+      f.seek(startingPoint)
+      for line in f:
         try:
           tweet = json.loads(line[:-2])
-          tweetsData.append(tweet)
+          tweetParts.append(tweet)
         except:
           try:
             tweet = json.loads(line[:-1])
-            tweetsData.append(tweet)
+            tweetParts.append(tweet)
           except:
             continue
-    if size > 1:
-      tweetParts = np.array_split(tweetsData, size)
-    else:
-      tweetParts = tweetsData
-  else: # Slaves 
-    tweetParts = None 
-  
   return tweetParts
 
 def extractInfoFromTweet(tweetData, grids):
@@ -109,19 +120,19 @@ if __name__ == "__main__":
   comm = MPI.COMM_WORLD
   size = comm.size
   rank = comm.rank
-
-  tweetParts = splitData(twitterFile, rank, size)
+  
+  tweetStartingPoints = splitData(twitterFile, rank, size)
 
   #Scatter the data into slaves, then gather into master
   if rank == 0 and size < 2:
+    tweetParts = getTweetsFromStartPoints(twitterFile, tweetStartingPoints)
     extractInfoFromTweet(tweetParts, grids)
     result = [grids]
   else:
-    part = comm.scatter(tweetParts, root = 0)
+    startingPointsChunk = comm.scatter(tweetStartingPoints, root = 0)
+    part = getTweetsFromStartPoints(twitterFile, startingPointsChunk)
     extractInfoFromTweet(part, grids)
     result = comm.gather(grids, root = 0)
-
-  # TODO: Remove redundant hashtags? what's for???
 
   if rank == 0:
     # Combine the results
