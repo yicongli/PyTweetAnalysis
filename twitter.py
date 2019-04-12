@@ -86,7 +86,7 @@ def readTweetsFromStartPoints(twitterFile, startingPoints, grids):
           extractInfoFromTweet(tweet, grids)
         except:
           continue
-          
+
 def extractInfoFromTweet(tweet, grids):
   """
   Count the number of posts and the frequencies of hashtags
@@ -130,25 +130,13 @@ if __name__ == "__main__":
 
   # Split the starting points array in the master node if the number of processors is more than 1
   if rank == 0:
-    #if size > 1:
-      tweetStartingPoints = np.array_split(allStartingPoints, size)
-    #else:
-    #  tweetStartingPoints = allStartingPoints
+    tweetStartingPoints = np.array_split(allStartingPoints, size)
   else:
     tweetStartingPoints = None 
-
-  # Scatter and Gather
-  # if rank == 0 and size < 2:
-  #   # If there is only one processor, no need to scatter
-  #   tweetParts = getTweetsFromStartPoints(twitterFile, tweetStartingPoints)
-  #   extractInfoFromTweet(tweetParts, grids)
-  #   result = [grids]
-  # else:
   
   #Scatter the array of all starting points into slaves, then gather into master
   startingPointsChunk = comm.scatter(tweetStartingPoints, root = 0)
   readTweetsFromStartPoints(twitterFile, startingPointsChunk, grids)
-  # extractInfoFromTweet(part, grids)
   result = comm.gather(grids, root = 0)
 
   # In the master node, gather all the results and sort them in order 
