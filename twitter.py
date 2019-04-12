@@ -50,7 +50,7 @@ def initResultDic():
   """
   resultDic = {}
   for key, value in g_grids.items():
-    resultDic[key] = {'posN':0, 'hashtags': {}}
+    resultDic[key] = {'postNum':0, 'hashtags': {}}
   
   return resultDic
 
@@ -93,8 +93,8 @@ def extractInfoFromData(data, resultDic):
     # if the value in the specific area, then store the data into the result dic
     if (dataCoord[0] <= value['xmax'] and dataCoord[0] > value['xmin'] 
     and dataCoord[1] < value['ymax'] and dataCoord[1] >= value['ymin']):
-      postNum = resultDic[key]['posN']
-      resultDic[key]['posN'] = postNum + 1
+      postNum = resultDic[key]['postNum']
+      resultDic[key]['postNum'] = postNum + 1
       hashtags = data['doc']['entities']['hashtags']
       # if has hashtags, then record the hash dic
       if len(hashtags) > 0:
@@ -123,8 +123,8 @@ def handlingAllData(dataList):
   result = initResultDic()
   for data in dataList:
     for key, value in data.items():
-      totalNum = result[key]['posN']
-      result[key]['posN'] = value['posN'] + totalNum
+      totalNum = result[key]['postNum']
+      result[key]['postNum'] = value['postNum'] + totalNum
 
       hashtags = value['hashtags']
       for hashtag, frequency in hashtags.items():
@@ -151,13 +151,13 @@ def orderTheResultIntoList(resultDic):
         else:
           break
     value['hashtags'] = topFives 
-  resultList = [(k, resultDic[k]) for k in sorted(resultDic, key=lambda x: resultDic[x]['posN'], reverse=True)]
+  resultList = [(k, resultDic[k]) for k in sorted(resultDic, key=lambda x: resultDic[x]['postNum'], reverse=True)]
   return resultList
 
 def printOut(resultList):
   print('The rank of Grid boxes:')
   for value in resultList:
-    print('%s: %d posts,' % (value[0], value[1]['posN']))
+    print('%s: %d posts,' % (value[0], value[1]['postNum']))
   
   print('-'*30)
   print('The rank of the top 5 hashtags in each Grid boxes:')
