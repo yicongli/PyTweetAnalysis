@@ -61,7 +61,7 @@ def splitData(twitterFile, rank, size):
   if rank == 0:
     startingPoints = []
     length = 0
-    with open(twitterFile, 'r') as f:
+    with open(twitterFile, 'rb') as f:
       for line in f:
         startingPoints.append(length)
         length += len(line)
@@ -122,11 +122,6 @@ if __name__ == "__main__":
   rank = comm.rank
   
   tweetStartingPoints = splitData(twitterFile, rank, size)
-  #print (tweetStartingPoints)
-  # f = open(twitterFile, 'r')
-  # f.seek(3671)
-  # print (f.readline())
-
 
   #Scatter the data into slaves, then gather into master
   if rank == 0 and size < 2:
