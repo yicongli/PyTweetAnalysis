@@ -45,8 +45,7 @@ def getStartingPoints(fileName):
 
 def initResultDic():
   """
-  init the result dic with the grid dic
-  This result dic is used to store all the info that collected from json data
+  Initialise the result dictionary: Store the post number and hashtags of each grid box
   """
   resultDic = {}
   for key, value in g_grids.items():
@@ -56,7 +55,7 @@ def initResultDic():
 
 def parseJsonDataWithConf(fileName, startLinePoint, maxRange):
   """
-  parse json data according to the starting point and the range
+  Parse json data according to the starting point and the max range from the twitter file
   """
   result = initResultDic()
 
@@ -79,7 +78,7 @@ def parseJsonDataWithConf(fileName, startLinePoint, maxRange):
 
 def extractInfoFromData(data, resultDic):
   """
-  This function is to extract the infomation from
+  Extract the information from tweets
   """
   try:
     dataCoord = data['doc']['coordinates']['coordinates']
@@ -108,7 +107,7 @@ def extractInfoFromData(data, resultDic):
 
 def inputFileName():
   """
-  get json file name
+  get twitter file name from command line
   """
   if len(sys.argv) != 2:
     print ("twitter.py <twitter_file.json>" )
@@ -137,7 +136,7 @@ def handlingAllData(dataList):
 
 def orderTheResultIntoList(resultDic):
   """
-  Sort the grid by post number, sort the hash tags of each area by frequencies 
+  Sort the grid by post number, sort the hash tags of each area by frequency
   """
   for key, value in resultDic.items():
     hashtagDic = value['hashtags']
@@ -155,6 +154,9 @@ def orderTheResultIntoList(resultDic):
   return resultList
 
 def printOut(resultList):
+  """
+  Print out the results
+  """
   print('The rank of Grid boxes:')
   for value in resultList:
     print('%s: %d posts,' % (value[0], value[1]['postNum']))
