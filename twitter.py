@@ -1,7 +1,7 @@
 import sys
 import json
 from mpi4py import MPI
-import numpy as np
+import numpy as np 
 import os.path
 
 MELBOURNE_GRID_FILE = "melbGrid.json"
@@ -130,29 +130,39 @@ if __name__ == "__main__":
 
   # Split the starting points array in the master node if the number of processors is more than 1
   if rank == 0:
-    tweetStartingPoints = np.array_split(allStartingPoints, size)
+    allStartingPoints = allStartingPoints[1:-1]
+    if size > 1:
+      tweetStartingPoints = np.array_split(allStartingPoints, size)
+    else:
+      tweetStartingPoints = allStartingPoints
   else:
     tweetStartingPoints = None 
   
   #Scatter the array of all starting points into slaves, then gather into master
-  startingPointsChunk = comm.scatter(tweetStartingPoints, root = 0)
-  readTweetsFromStartPoints(twitterFile, startingPointsChunk, grids)
-  result = comm.gather(grids, root = 0)
+  if rank == 0 and size < 2:
+    result = readTweetsFromStartPoints(twitterFile, tweetStartingPoints, grids)
+  else:
+    startingPointsChunk = comm.scatter(tweetStartingPoints, root = 0)
+    readTweetsFromStartPoints(twitterFile, startingPointsChunk, grids)
+    result = comm.gather(grids, root = 0)
 
   # In the master node, gather all the results and sort them in order 
   if rank == 0:
     # Combine the results
-    resultGrids = getMelbourneGrids()
-    for tweetPart in result:
-      for gridId in tweetPart:
-        currentNumPosts = resultGrids[gridId]["numPosts"]
-        resultGrids[gridId]["numPosts"] = currentNumPosts + tweetPart[gridId]["numPosts"]
+    if size > 1:
+      resultGrids = getMelbourneGrids()
+      for tweetPart in result:
+        for gridId in tweetPart:
+          currentNumPosts = resultGrids[gridId]["numPosts"]
+          resultGrids[gridId]["numPosts"] = currentNumPosts + tweetPart[gridId]["numPosts"]
 
-        for hashtag in tweetPart[gridId]["hashtags"]:
-          if hashtag in resultGrids[gridId]["hashtags"]:
-            resultGrids[gridId]["hashtags"][hashtag] += tweetPart[gridId]["hashtags"][hashtag]
-          else:
-            resultGrids[gridId]["hashtags"][hashtag] = tweetPart[gridId]["hashtags"][hashtag]
+          for hashtag in tweetPart[gridId]["hashtags"]:
+            if hashtag in resultGrids[gridId]["hashtags"]:
+              resultGrids[gridId]["hashtags"][hashtag] += tweetPart[gridId]["hashtags"][hashtag]
+            else:
+              resultGrids[gridId]["hashtags"][hashtag] = tweetPart[gridId]["hashtags"][hashtag]
+    else:
+      resultGrids = grids
 
     # Sort result grids in order of number of posts
     sortedGridIds = sorted(resultGrids, key = lambda gridId: resultGrids[gridId]["numPosts"], reverse = True)
