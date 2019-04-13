@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --partition=physical
-#SBATCH --time=00:03:00
+#SBATCH --time=00:20:00
 #SBATCH --nodes=2
 #SBATCH --ntasks-per-node=4
 #SBATCH --cpus-per-task=1
